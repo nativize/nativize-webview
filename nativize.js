@@ -94,28 +94,43 @@ export const run = async ({ identifier, avd }) => {
     await new Promise((resolve) => setTimeout(resolve, 5000));
     console.log("BOOTEDDDDDDDDDD!!!!!!!!")
 
-    await new Deno.Command(
-      "adb",
       {
-        args: [
-          "install",
-          "-r",
-          //TODO: change file name?
-          `./app/build/outputs/apk/debug/app-debug.apk`,
-        ],
-        cwd: import.meta.dirname,
       },
-    ).spawn().status;
 
-    await new Deno.Command("adb", {
-      args: ["shell", "am", "start", "-n", `${identifier}/.MainActivity`],
-    }).spawn().status;
 
     if (emulatorProcess) {
       await emulatorProcess.status;
     }
   } catch (error) {
     console.error(error);
+  await new Deno.Command(`${import.meta.dirname}/gradlew.bat`, {
+    args: [
+      "uninstallAll",
+      `-Pidentifier=${
+        identifier ??
+          "com.nativize.placeholder"
+      }`,
+    ],
+    cwd: import.meta.dirname,
+  }).spawn().status;
+
+  await new Deno.Command(`${import.meta.dirname}/gradlew.bat`, {
+    args: [
+      "installDebug",
+      `-Pidentifier=${
+        identifier ??
+          "com.nativize.placeholder"
+      }`,
+    ],
+    cwd: import.meta.dirname,
+  }).spawn().status;
+
+  await new Deno.Command("adb", {
+    args: ["shell", "am", "start", "-n", `${identifier}/.MainActivity`],
+  }).spawn().status;
+
+  if (emulatorProcess) {
+    await emulatorProcess.status;
   }
 };
 
