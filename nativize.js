@@ -31,7 +31,7 @@ export const prepare = async () => {
   //install packages?
 };
 
-export const build = async ({ identifier, device }) => {
+export const build = async ({ identifier }) => {
   console.log("Building webview...");
   //and we can pass identifier using -Pidentifier=${identifier}
   //we must check if device if connected. or if avd is given, we need to emulate it as well..
