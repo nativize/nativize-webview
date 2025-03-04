@@ -23,7 +23,7 @@ export const check = async () => {
   //check if following command is available right away:
   //adb: to run
   //emulator: to emulate android
-  //gradlew (well, not necessarily since it already exists on root)
+  //gradlew (well, not necessarily since it (should) already exists on root)
 };
 
 export const prepare = async () => {
