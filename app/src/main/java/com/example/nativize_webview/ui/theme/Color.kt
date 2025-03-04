@@ -1,4 +1,4 @@
-package com.example.nativize_webview.ui.theme
+package com.nativize.nativize_webview.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

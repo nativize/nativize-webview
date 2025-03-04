@@ -1,4 +1,4 @@
-package com.example.nativize_webview
+package com.nativize.nativize_webview
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -11,7 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.nativize_webview.ui.theme.NativizewebviewTheme
+import com.nativize.nativize_webview.ui.theme.NativizewebviewTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

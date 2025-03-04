@@ -1,4 +1,4 @@
-package com.example.nativize_webview
+package com.nativize.nativize_webview
 
 import org.junit.Test
 

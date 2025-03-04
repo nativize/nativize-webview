@@ -1,4 +1,4 @@
-package com.example.nativize_webview
+package com.nativize.nativize_webview
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.example.nativize_webview", appContext.packageName)
+        assertEquals("com.nativize.nativize_webview", appContext.packageName)
     }
 }
