@@ -33,76 +33,65 @@ export const prepare = async () => {
 
 export const build = async ({ identifier }) => {
   console.log("Building webview...");
-  //and we can pass identifier using -Pidentifier=${identifier}
-  //we must check if device if connected. or if avd is given, we need to emulate it as well..
 
-  try {
-    await new Deno.Command(
-      `${import.meta.dirname}/gradlew.bat`,
-      {
-        args: ["assembleDebug", `-Pidentifier=${identifier}`],
-        cwd: import.meta.dirname,
-      },
-    ).spawn().status;
-  } catch (error) {
-    console.error(error);
-  }
+  await new Deno.Command(
+    `${import.meta.dirname}/gradlew.bat`,
+    {
+      args: [
+        "assembleDebug",
+        `-Pidentifier=${
+          identifier ??
+            "com.nativize.placeholder"
+        }`,
+      ],
+      cwd: import.meta.dirname,
+    },
+  ).spawn().status;
 };
 
 export const run = async ({ identifier, avd }) => {
-  try {
-    let emulatorProcess;
+  let emulatorProcess;
 
-    if (avd) {
-      emulatorProcess = new Deno.Command("emulator", {
-        args: ["-avd", avd, "-no-snapshot-load", "-no-boot-anim"],
-        stdout: "piped",
-        stderr: "piped",
-      }).spawn();
+  if (avd) {
+    emulatorProcess = new Deno.Command("emulator", {
+      args: ["-avd", avd, "-no-snapshot-load", "-no-boot-anim"],
+      stdout: "piped",
+      stderr: "piped",
+    }).spawn();
 
-      emulatorProcess.stdout.pipeTo(
-        new WritableStream({
-          write(chunk) {
-            Deno.stdout.write(chunk);
-          },
-        }),
-        {
-          preventClose: true,
+    emulatorProcess.stdout.pipeTo(
+      new WritableStream({
+        write(chunk) {
+          Deno.stdout.write(chunk);
         },
-      );
-
-      emulatorProcess.stderr.pipeTo(
-        new WritableStream({
-          write(chunk) {
-            Deno.stderr.write(chunk);
-          },
-        }),
-        {
-          preventClose: true,
-        },
-      );
-    }
-
-    await new Deno.Command("adb", {
-      args: ["wait-for-device"],
-    }).spawn().status;
-
-    await waitForService("activity");
-    await waitForService("package");
-
-
-    await new Promise((resolve) => setTimeout(resolve, 5000));
-    console.log("BOOTEDDDDDDDDDD!!!!!!!!")
-
+      }),
       {
+        preventClose: true,
       },
+    );
 
+    emulatorProcess.stderr.pipeTo(
+      new WritableStream({
+        write(chunk) {
+          Deno.stderr.write(chunk);
+        },
+      }),
+      {
+        preventClose: true,
+      },
+    );
+  }
 
-    if (emulatorProcess) {
-      await emulatorProcess.status;
-    }
-  } catch (error) {
-    console.error(error);
+  await new Deno.Command("adb", {
+    args: ["wait-for-device"],
+  }).spawn().status;
+
+  await waitForService("activity");
+  await waitForService("package");
+
+  await new Promise((resolve) => setTimeout(resolve, 5000));
+  console.log("BOOTEDDDDDDDDDD!!!!!!!!");
+
   await new Deno.Command(`${import.meta.dirname}/gradlew.bat`, {
     args: [
       "uninstallAll",
@@ -135,17 +124,15 @@ export const run = async ({ identifier, avd }) => {
 };
 
 export const clean = async () => {
-  try {
-    const process = new Deno.Command(
-      `${import.meta.dirname}/gradlew.bat`,
-      {
-        args: ["clean"],
-        cwd: import.meta.dirname,
-      },
-    ).spawn();
+  const process = new Deno.Command(
+    `${import.meta.dirname}/gradlew.bat`,
+    {
+      //TODO: this -Pidentifier is hardcoded, idk if it cleans project anyway
+      // I guess it does
+      args: ["clean", "-Pidentifier=com.nativize.placeholder"],
+      cwd: import.meta.dirname,
+    },
+  ).spawn();
 
-    await process.status;
-  } catch (error) {
-    console.error(error);
-  }
+  await process.status;
 };
