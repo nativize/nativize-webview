@@ -1,4 +1,7 @@
-package com.nativize.nativize_webview
+//TODO: we need to allow nativize.js to substitute custom identifier
+//FIXME: this does not work because the package name below should match with `identifier`
+// perhaps, using Kotlin Compiler Plugin?
+package com.nativize.nativize_webview 
 
 import android.os.Bundle
 import android.webkit.WebView
