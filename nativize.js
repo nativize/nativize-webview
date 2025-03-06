@@ -115,7 +115,9 @@ export const run = async ({ identifier, avd }) => {
   }).spawn().status;
 
   await new Deno.Command("adb", {
-    args: ["shell", "am", "start", "-n", `${identifier}/.MainActivity`],
+    //                                                  any way to customize? check app/src/main/java/com/nativize/nativize_webview/MainActivity.kt line 1 
+    //                                                  vvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+    args: ["shell", "am", "start", "-n", `${identifier}/com.nativize.nativize_webview.MainActivity`],
   }).spawn().status;
 
   if (emulatorProcess) {
