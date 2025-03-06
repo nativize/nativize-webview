@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = project.findProperty("identifier") as String
+    namespace = "com.nativize.nativize_webview"
     compileSdk = 35
 
     defaultConfig {
