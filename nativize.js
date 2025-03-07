@@ -31,22 +31,26 @@ export const prepare = async () => {
   //install packages?
 };
 
-export const build = async ({ identifier }) => {
+export const build = async ({ identifier, url }) => {
   console.log("Building webview...");
 
-  await new Deno.Command(
-    `${import.meta.dirname}/gradlew.bat`,
-    {
-      args: [
-        "assembleDebug",
-        }`,
-      ],
-      cwd: import.meta.dirname,
-    },
-  ).spawn().status;
+  if (
+    !(await new Deno.Command(
+      `${import.meta.dirname}/gradlew.bat`,
+      {
+        args: [
+          "assembleDebug",
           "-PnativizeIdentifier=" +
               identifier ??
             "com.nativize.placeholder",
+          "-PnativizeURL=" + url ?? "about:blank",
+        ],
+        cwd: import.meta.dirname,
+      },
+    ).spawn().status).success
+  ) {
+    throw new Error("Failed to build webview");
+  }
 };
 
 export const run = async ({ identifier, avd }) => {
@@ -115,9 +119,15 @@ export const run = async ({ identifier, avd }) => {
   }).spawn().status;
 
   await new Deno.Command("adb", {
-    //                                                  any way to customize? check app/src/main/java/com/nativize/nativize_webview/MainActivity.kt line 1 
+    //                                                  any way to customize? check app/src/main/java/com/nativize/nativize_webview/MainActivity.kt line 1
     //                                                  vvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-    args: ["shell", "am", "start", "-n", `${identifier}/com.nativize.nativize_webview.MainActivity`],
+    args: [
+      "shell",
+      "am",
+      "start",
+      "-n",
+      `${identifier}/com.nativize.nativize_webview.MainActivity`,
+    ],
   }).spawn().status;
 
   if (emulatorProcess) {
@@ -126,7 +136,7 @@ export const run = async ({ identifier, avd }) => {
 };
 
 export const clean = async () => {
-  const process = new Deno.Command(
+  await new Deno.Command(
     `${import.meta.dirname}/gradlew.bat`,
     {
       //TODO: this -Pidentifier is hardcoded, idk if it cleans project anyway
@@ -134,7 +144,5 @@ export const clean = async () => {
       args: ["clean", "-PnativizeIdentifier=com.nativize.placeholder"],
       cwd: import.meta.dirname,
     },
-  ).spawn();
-
-  await process.status;
+  ).spawn().status;
 };

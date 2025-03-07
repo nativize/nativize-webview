@@ -16,6 +16,11 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        if (gradle.startParameter.taskNames.any {it.contains("compile") || it.contains("assemble")}) {
+            project.logger.lifecycle("nativizeURL: ${project.findProperty("nativizeURL") as String}")
+            buildConfigField("String", "NATIVIZE_URL", "\"${project.findProperty("nativizeURL") as String}\"")
+        }
     }
 
     buildTypes {
@@ -36,11 +41,11 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

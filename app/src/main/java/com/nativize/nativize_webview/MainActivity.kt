@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
                     }
                 },
                 update = { webView ->
-                    webView.loadUrl("https://github.com/nativize")
+                    webView.loadUrl(BuildConfig.NATIVIZE_URL)
                 }
             )
         }
