@@ -18,7 +18,6 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         if (gradle.startParameter.taskNames.any {it.contains("compile") || it.contains("assemble")}) {
-            project.logger.lifecycle("nativizeURL: ${project.findProperty("nativizeURL") as String}")
             buildConfigField("String", "NATIVIZE_URL", "\"${project.findProperty("nativizeURL") as String}\"")
         }
     }
