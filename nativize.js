@@ -39,14 +39,14 @@ export const build = async ({ identifier }) => {
     {
       args: [
         "assembleDebug",
-        `-Pidentifier=${
-          identifier ??
-            "com.nativize.placeholder"
         }`,
       ],
       cwd: import.meta.dirname,
     },
   ).spawn().status;
+          "-PnativizeIdentifier=" +
+              identifier ??
+            "com.nativize.placeholder",
 };
 
 export const run = async ({ identifier, avd }) => {
@@ -95,7 +95,7 @@ export const run = async ({ identifier, avd }) => {
   await new Deno.Command(`${import.meta.dirname}/gradlew.bat`, {
     args: [
       "uninstallAll",
-      `-Pidentifier=${
+      `-PnativizeIdentifier=${
         identifier ??
           "com.nativize.placeholder"
       }`,
@@ -106,7 +106,7 @@ export const run = async ({ identifier, avd }) => {
   await new Deno.Command(`${import.meta.dirname}/gradlew.bat`, {
     args: [
       "installDebug",
-      `-Pidentifier=${
+      `-PnativizeIdentifier=${
         identifier ??
           "com.nativize.placeholder"
       }`,
@@ -131,7 +131,7 @@ export const clean = async () => {
     {
       //TODO: this -Pidentifier is hardcoded, idk if it cleans project anyway
       // I guess it does
-      args: ["clean", "-Pidentifier=com.nativize.placeholder"],
+      args: ["clean", "-PnativizeIdentifier=com.nativize.placeholder"],
       cwd: import.meta.dirname,
     },
   ).spawn();

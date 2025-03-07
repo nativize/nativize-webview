@@ -9,7 +9,7 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        applicationId = project.findProperty("identifier") as String
+        applicationId = project.findProperty("nativizeIdentifier") as String
         minSdk = 24
         targetSdk = 35
         versionCode = 1
