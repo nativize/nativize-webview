@@ -34,23 +34,27 @@ export const prepare = async () => {
 export const build = async ({ identifier, url }) => {
   console.log("Building webview...");
 
-  if (
-    !(await new Deno.Command(
-      `${import.meta.dirname}/gradlew.bat`,
-      {
-        args: [
-          "assembleDebug",
-          "-PnativizeIdentifier=" +
-              identifier ??
-            "com.nativize.placeholder",
-          "-PnativizeURL=" + url ?? "about:blank",
-        ],
-        cwd: import.meta.dirname,
-      },
-    ).spawn().status).success
-  ) {
-    throw new Error("Failed to build webview");
-  }
+  await new Deno.Command(
+    `${import.meta.dirname}/gradlew.bat`,
+    {
+      args: [
+        "assembleDebug",
+        "-PnativizeIdentifier=" +
+            identifier ??
+          "com.nativize.placeholder",
+        "-PnativizeURL=" + url ?? "about:blank",
+      ],
+      cwd: import.meta.dirname,
+    },
+  ).spawn()
+    .status
+    .then(({ success }) => {
+      if (!success) {
+        throw new Error(
+          `${import.meta.dirname}/gradlew.bat assembleDebug ... failed.`,
+        );
+      }
+    });
 };
 
 export const run = async ({ identifier, avd }) => {
@@ -88,7 +92,15 @@ export const run = async ({ identifier, avd }) => {
 
   await new Deno.Command("adb", {
     args: ["wait-for-device"],
-  }).spawn().status;
+  }).spawn()
+    .status
+    .then(({ success }) => {
+      if (!success) {
+        throw new Error(
+          `adb wait-for-device .. failed.`, //TODO: change error message
+        );
+      }
+    });
 
   await waitForService("activity");
   await waitForService("package");
@@ -105,7 +117,15 @@ export const run = async ({ identifier, avd }) => {
       }`,
     ],
     cwd: import.meta.dirname,
-  }).spawn().status;
+  }).spawn()
+    .status
+    .then(({ success }) => {
+      if (!success) {
+        throw new Error(
+          `${import.meta.dirname}/gradlew.bat uninstallAll ... failed.`, //TODO: change error message
+        );
+      }
+    });
 
   await new Deno.Command(`${import.meta.dirname}/gradlew.bat`, {
     args: [
@@ -116,19 +136,35 @@ export const run = async ({ identifier, avd }) => {
       }`,
     ],
     cwd: import.meta.dirname,
-  }).spawn().status;
+  }).spawn()
+    .status
+    .then(({ success }) => {
+      if (!success) {
+        throw new Error(
+          `${import.meta.dirname}/gradlew.bat installDebug ... failed.`, //TODO: change error message
+        );
+      }
+    });
 
   await new Deno.Command("adb", {
-    //                                                  any way to customize? check app/src/main/java/com/nativize/nativize_webview/MainActivity.kt line 1
-    //                                                  vvvvvvvvvvvvvvvvvvvvvvvvvvvvv
     args: [
       "shell",
       "am",
       "start",
       "-n",
+      //             any way to customize? check app/src/main/java/com/nativize/nativize_webview/MainActivity.kt line 1
+      //             vvvvvvvvvvvvvvvvvvvvvvvvvvvvv
       `${identifier}/com.nativize.nativize_webview.MainActivity`,
     ],
-  }).spawn().status;
+  }).spawn()
+    .status
+    .then(({ success }) => {
+      if (!success) {
+        throw new Error(
+          "adb shell am start -n ... failed", //TODO: better Error message plz
+        );
+      }
+    });
 
   if (emulatorProcess) {
     await emulatorProcess.status;
@@ -144,5 +180,13 @@ export const clean = async () => {
       args: ["clean", "-PnativizeIdentifier=com.nativize.placeholder"],
       cwd: import.meta.dirname,
     },
-  ).spawn().status;
+  ).spawn()
+    .status
+    .then(({ success }) => {
+      if (!success) {
+        throw new Error(
+          "gradlew.bat clean ... failed", //TODO: better Error message plz
+        );
+      }
+    });
 };
